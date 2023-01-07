@@ -12,9 +12,13 @@ export class User {
   @Column()
   public hashedPassword: string;
 
-  @Column()
+  @Column({
+    name: "address",
+    type: "text",
+    nullable: true,
+  })
   public address: string;
-  
+
   @Column({
     name: "coordinates",
     type: "geometry",

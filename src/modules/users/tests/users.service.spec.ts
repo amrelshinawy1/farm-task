@@ -36,7 +36,7 @@ describe("UsersController", () => {
   describe(".createUser", () => {
     const createUserDto: CreateUserDto = { email: "user@test.com", password: "password", address:"test address", coordinates:{latitude:30.1, longitude:30.2} };
 
-    it.only("should create new user", async () => {
+    it("should create new user", async () => {
       const createdUser = await usersService.createUser(createUserDto);
       expect(createdUser).toBeInstanceOf(User);
     });
