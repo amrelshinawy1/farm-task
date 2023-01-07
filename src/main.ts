@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { containsNumbers, transformStringToNumber } from "helpers/utils";
+import { containsNumbers, findFilesInDir, transformStringToNumber } from "helpers/utils";
 import http from "http";
 import config from "./config/config";
 import dataSource from "./orm/orm.config";
@@ -28,6 +28,11 @@ bootstrap();
 
 //1. Please write a function to transform array to containing number and strings.
 transformStringToNumber(["super", "20.5", "test", "23" ])
+
+
+//2. Please write a function to return an array of all `.csv` files in folder `/files`
+findFilesInDir("./files", ".csv")
+
 
 //3. Please write a function to return if a string contains a digit
 containsNumbers("test-string")
