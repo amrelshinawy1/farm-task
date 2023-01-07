@@ -17,3 +17,9 @@ export const transformStringToNumber = (stringArray: string[])=>{
   }  
   console.log(numberArray)
 }
+
+export const containsNumbers =(text:string) =>{
+  const hasNumber = Boolean(text.match(/\d/));
+  console.log(`'${text}' -> '${hasNumber}'`)
+  return hasNumber;
+}
