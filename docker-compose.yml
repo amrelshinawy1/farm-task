@@ -2,8 +2,8 @@ version: "3.7"
 
 services:
   postgres:
-    container_name: agreena
-    image: postgres
+    container_name: agreena-gis
+    image: postgis/postgis
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -17,7 +17,7 @@ services:
       - postgres
 
   pgadmin:
-    container_name: agreena_pg-admin
+    container_name: agreena_pgis-admin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: postgres@gmail.com
