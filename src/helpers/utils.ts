@@ -9,6 +9,13 @@ export const disconnectAndClearDatabase = async (ds: DataSource): Promise<void> 
   await ds.destroy();
 };
 
+function isNullOrUndefined<T>(obj: T | null | undefined): obj is null | undefined {
+  return typeof obj === "undefined" || obj === null;
+  }
+  export {
+  isNullOrUndefined
+};
+  
 //# Small code exercises
 //1. Please write a function to transform array to containing number and strings.
 export const transformStringToNumber = (stringArray: string[])=>{
