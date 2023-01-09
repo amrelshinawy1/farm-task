@@ -80,6 +80,7 @@ _Add API that supports following requirements:_
           For **driving distance** Google Maps can be
           used (https://developers.google.com/maps/documentation/distance-matrix/overview).<br/>
           You are also welcome to use other service.
+          // here i used postGIS that has functions to calculate disctance betwwen two points in the database which i think it simple and easy 
 
     - The user should be able to get list **sorted** by
         - **name** (a to z)
