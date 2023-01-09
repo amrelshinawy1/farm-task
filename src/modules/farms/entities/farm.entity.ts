@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "modules/users/entities/user.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ColumnNumericTransformer } from "./column.numeric.transformer";
 import { IGeometry } from "./farm.interface";
 
@@ -43,6 +44,9 @@ export class Farm {
     srid: 4326
   })
   public coordinates: IGeometry;
+
+  @ManyToOne(() => User)
+  public user: User;
 
   @CreateDateColumn()
   public createdAt: Date;
