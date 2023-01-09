@@ -48,16 +48,13 @@ export class FarmsService {
     .createQueryBuilder("farm")
     .leftJoinAndSelect("farm.user", "user")
     .select([
-      "farm.id",
-      "farm.name",
-      "farm.address",
-      "farm.coordinates",
-      "farm.size",
-      "farm.yield",
-      "user.id",
-      "user.email"
+      "farm.name as name",
+      "farm.address as address",
+      "farm.size as size",
+      "farm.yield as yield",
+      "user.email as owner"
     ])
-    // farmQuery.addSelect(`st_distance_sphere(farm.coordinates", st_setsrid(st_makepoint(${user.coordinates.coordinates[1]},${user.coordinates.coordinates[0]}),4326)) AS driving_distance`)
+    farmQuery.addSelect(`round(CAST(st_distancespheroid("farm"."coordinates", st_setsrid(st_makepoint(${user.coordinates.coordinates[1]},${user.coordinates.coordinates[0]}),4326))As numeric),2) as driving_distance`)
     const response = await paginate(farmQuery, paginationOptions);
     return response;
   }

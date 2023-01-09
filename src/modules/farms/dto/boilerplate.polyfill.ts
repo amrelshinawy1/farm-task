@@ -41,30 +41,34 @@ export const sortResult = <Entity extends ObjectLiteral = any>(query: SelectQuer
   query.addOrderBy(`${tableName}.${sortExpressions.sortColumn}`, sortExpressions.sortType);
 };
 
-export const paginate = 
-async <Entity extends ObjectLiteral = any>(query: SelectQueryBuilder<Entity>, pageOptionsDto: PageOptionsDto)
-  : Promise<[Entity[], PageMetaDto]> => {
+export const paginate =
+  async <Entity extends ObjectLiteral = any>(query: SelectQueryBuilder<Entity>, pageOptionsDto: PageOptionsDto)
+    : Promise<[Entity[], PageMetaDto]> => {
 
-  searchByString(query, pageOptionsDto.searchQuery, pageOptionsDto.searchExpression);
-  sortResult(query, pageOptionsDto.sortExpressions);
+    searchByString(query, pageOptionsDto.searchQuery, pageOptionsDto.searchExpression);
+    sortResult(query, pageOptionsDto.sortExpressions);
 
-  const pageNumber: number = Number(pageOptionsDto.pageNumber) || 1;
-  const pageSize: number = Number(pageOptionsDto.pageSize) || 1000;
+    const pageNumber: number = Number(pageOptionsDto.pageNumber) || 1;
+    const pageSize: number = Number(pageOptionsDto.pageSize) || 1000;
 
-  const skip: number = (pageNumber - 1) * pageSize;
+    const skip: number = (pageNumber - 1) * pageSize;
+    const [items, count] = await Promise.all([
+      query.offset(skip)
+        .limit(pageSize)
+        .getRawMany(),
+      query.skip(skip)
+        .take(pageSize)
+        .getCount()
+    ])
+    const pageCount = Math.ceil(count / pageSize);
 
-  const [items, itemCount] = await query.skip(skip)
-    .take(pageSize)
-    .getManyAndCount();
-  const pageCount = Math.ceil(itemCount / pageSize);
-
-  const pageMetaDto = {
-    itemCount,
-    pageNumber,
-    pageSize,
-    pageCount,
-    hasPreviousPage: pageNumber > 1,
-    hasNextPage: pageNumber < pageCount
+    const pageMetaDto = {
+      itemCount: count,
+      pageNumber,
+      pageSize,
+      pageCount,
+      hasPreviousPage: pageNumber > 1,
+      hasNextPage: pageNumber < pageCount
+    };
+    return [items, pageMetaDto];
   };
-  return [items, pageMetaDto];
-};

@@ -8,6 +8,7 @@ let options: DataSourceOptions = {
   migrations: ["src/**/**/migrations/**/*.ts"],
   host: config.DB_HOST,
   port: config.DB_PORT,
+  // logging: true,
   username: config.DB_USERNAME,
   password: config.DB_PASSWORD,
   database: config.DB_NAME,

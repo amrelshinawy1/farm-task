@@ -26,8 +26,8 @@ export class FarmsController {
     try {
       const pageOptionsDto: PageOptionsDto = req.query as unknown as PageOptionsDto;
 
-      const farms = await this.farmsService.findAll(pageOptionsDto, req.tokenData.id);
-      return res.status(200).send({ message: "farms found.", farms });
+      const [farms, pageOption] = await this.farmsService.findAll(pageOptionsDto, req.tokenData.id);
+      return res.status(200).send({ message: "farms found.", farms, pageOption });
     } catch (error) {
       console.log(error);
       next(error);

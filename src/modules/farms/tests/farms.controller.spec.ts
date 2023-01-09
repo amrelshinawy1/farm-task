@@ -67,44 +67,81 @@ describe("FarmsController", () => {
       });
     });
 
+    it("should list farms", async () => {
+
+      await createUser(createUserDto);
+      const loginRes = await agent.post("/api/v1/auth/login").send(loginDto);
+      const headers = { Authorization: loginRes.body.token };
+      const user = await usersService.findOneBy({ email: loginDto.email });
+      if (!user) {
+        throw "user not found.";
+      }
+      await farmsService.createFarm(createFarmDto, user.id);
+
+      const res = await agent.get("/api/v1/farms?pageNumber=1&pageSize=5")
+        .send(createFarmDto)
+        .set(headers);
+      console.log(res.body)
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toMatchObject({
+        message: "farms found.",
+        farms: [{
+                 "address": "test address",
+                 "driving_distance": "14686.86",
+                 "name": "farm",
+                 "owner": "user@test.com",
+                 "size": "5.00",
+                 "yield": "5.00",
+               }],
+        pageOption: {
+          itemCount: 1,
+          pageNumber: 1,
+          pageSize: 5,
+          pageCount: 1,
+          hasPreviousPage: false,
+          hasNextPage: false
+        }
+      });
+    });
+
     it("should update farms", async () => {
       await createUser(createUserDto);
 
       const loginRes = await agent.post("/api/v1/auth/login").send(loginDto);
       const headers = { Authorization: loginRes.body.token };
 
-      const user = await usersService.findOneBy({email: loginDto.email});
-      if(!user){
+      const user = await usersService.findOneBy({ email: loginDto.email });
+      if (!user) {
         throw "user not found.";
       }
       console.log(user)
-     const farm =  await farmsService.createFarm(createFarmDto, user.id);
+      const farm = await farmsService.createFarm(createFarmDto, user.id);
       console.log(farm)
-      const updateFarmDto: Partial<UpdateFarmDto> = { name: "farm updated", size: 5, yield: 5};
+      const updateFarmDto: Partial<UpdateFarmDto> = { name: "farm updated", size: 5, yield: 5 };
 
       const res = await agent.put(`/api/v1/farms/${farm.id}`).send(updateFarmDto).set(headers);
 
       expect(res.statusCode).toBe(200);
-      const updatedFarm =  await farmsService.findOneBy({id: farm.id, user:{id:user.id}});
-      if(!updatedFarm){
+      const updatedFarm = await farmsService.findOneBy({ id: farm.id, user: { id: user.id } });
+      if (!updatedFarm) {
         throw "farm not found"
       }
       expect(updatedFarm.name).toBe("farm updated");
 
     });
 
-    
+
     it("should get one farm", async () => {
       await createUser(createUserDto);
 
       const loginRes = await agent.post("/api/v1/auth/login").send(loginDto);
       const headers = { Authorization: loginRes.body.token };
 
-      const user = await usersService.findOneBy({email: loginDto.email});
-      if(!user){
+      const user = await usersService.findOneBy({ email: loginDto.email });
+      if (!user) {
         throw "user not found.";
       }
-     const farm =  await farmsService.createFarm(createFarmDto, user.id);
+      const farm = await farmsService.createFarm(createFarmDto, user.id);
 
       const res = await agent.get(`/api/v1/farms/${farm.id}`).set(headers);
 
@@ -118,11 +155,11 @@ describe("FarmsController", () => {
       const loginRes = await agent.post("/api/v1/auth/login").send(loginDto);
       const headers = { Authorization: loginRes.body.token };
 
-      const user = await usersService.findOneBy({email: loginDto.email});
-      if(!user){
+      const user = await usersService.findOneBy({ email: loginDto.email });
+      if (!user) {
         throw "user not found.";
       }
-     const farm =  await farmsService.createFarm(createFarmDto, user.id);
+      const farm = await farmsService.createFarm(createFarmDto, user.id);
 
       const res = await agent.delete(`/api/v1/farms/${farm.id}`).set(headers);
 
