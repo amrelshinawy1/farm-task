@@ -1,13 +1,22 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { UsersService } from "modules/users/users.service";
 import dataSource from "orm/orm.config";
 import { DeepPartial, FindOptionsWhere, Repository } from "typeorm";
+import { paginate } from "./dto/boilerplate.polyfill";
 import { CreateFarmDto } from "./dto/create-farm.dto";
+import { PageMetaDto } from "./dto/pageMetaDto";
+import { PageOptionsDto } from "./dto/pageOptionsDto";
 import { Farm } from "./entities/farm.entity";
 
 export class FarmsService {
   private readonly farmsRepository: Repository<Farm>;
+  private readonly usersService: UsersService;
 
   constructor() {
     this.farmsRepository = dataSource.getRepository(Farm);
+    this.usersService = new UsersService();
   }
 
   public async createFarm(data: CreateFarmDto, userId: string): Promise<Farm> {
@@ -27,6 +36,30 @@ export class FarmsService {
 
     const newFarm = this.farmsRepository.create(farmData);
     return this.farmsRepository.save(newFarm);
+  }
+
+  public async findAll(paginationOptions: PageOptionsDto, userId: string): Promise<[Farm[], PageMetaDto]> {
+    const user = await this.usersService.findOneBy({id: userId});
+    if(!user){
+      throw "user not found.";
+    }
+    console.log(user)
+    const farmQuery = this.farmsRepository
+    .createQueryBuilder("farm")
+    .leftJoinAndSelect("farm.user", "user")
+    .select([
+      "farm.id",
+      "farm.name",
+      "farm.address",
+      "farm.coordinates",
+      "farm.size",
+      "farm.yield",
+      "user.id",
+      "user.email"
+    ])
+    // farmQuery.addSelect(`st_distance_sphere(farm.coordinates", st_setsrid(st_makepoint(${user.coordinates.coordinates[1]},${user.coordinates.coordinates[0]}),4326)) AS driving_distance`)
+    const response = await paginate(farmQuery, paginationOptions);
+    return response;
   }
 
   public async updateFarm(id: string, farmData: DeepPartial<Farm>, userId: string): Promise<void> {

@@ -1,6 +1,7 @@
 import { NextFunction, Response } from "express";
 import { IPrivateRequest } from "middlewares/verify.token";
 import { CreateFarmDto } from "./dto/create-farm.dto";
+import { PageOptionsDto } from "./dto/pageOptionsDto";
 import { UpdateFarmDto } from "./dto/update-farm.dto";
 import { Farm } from "./entities/farm.entity";
 import { FarmsService } from "./farms.service";
@@ -21,6 +22,18 @@ export class FarmsController {
       next(error);
     }
   }
+  public async getAll(req: IPrivateRequest, res: Response, next: NextFunction) {
+    try {
+      const pageOptionsDto: PageOptionsDto = req.query as unknown as PageOptionsDto;
+
+      const farms = await this.farmsService.findAll(pageOptionsDto, req.tokenData.id);
+      return res.status(200).send({ message: "farms found.", farms });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+  
   public async update(req: IPrivateRequest, res: Response, next: NextFunction) {
     try {
       const farmToUpdate = req.body as UpdateFarmDto
