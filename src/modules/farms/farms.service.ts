@@ -43,7 +43,6 @@ export class FarmsService {
     if(!user){
       throw "user not found.";
     }
-    console.log(user)
     const farmQuery = this.farmsRepository
     .createQueryBuilder("farm")
     .leftJoinAndSelect("farm.user", "user")

@@ -81,8 +81,8 @@ describe("FarmsController", () => {
       const res = await agent.get("/api/v1/farms?pageNumber=1&pageSize=5")
         .send(createFarmDto)
         .set(headers);
-      console.log(res.body)
-      expect(res.statusCode).toBe(200);
+
+        expect(res.statusCode).toBe(200);
       expect(res.body).toMatchObject({
         message: "farms found.",
         farms: [{
@@ -114,9 +114,9 @@ describe("FarmsController", () => {
       if (!user) {
         throw "user not found.";
       }
-      console.log(user)
+
       const farm = await farmsService.createFarm(createFarmDto, user.id);
-      console.log(farm)
+
       const updateFarmDto: Partial<UpdateFarmDto> = { name: "farm updated", size: 5, yield: 5 };
 
       const res = await agent.put(`/api/v1/farms/${farm.id}`).send(updateFarmDto).set(headers);
